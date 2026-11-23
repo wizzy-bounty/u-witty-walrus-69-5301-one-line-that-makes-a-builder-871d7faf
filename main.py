@@ -21,7 +21,22 @@ LINE = (
 DEFAULT_OUTPUT = "/output/entry.txt"
 
 
+def validate(line: str) -> None:
+    """Gate: 1-240 chars, valid UTF-8, non-whitespace, exactly one sentence."""
+    text = line.strip()
+    if not text:
+        raise ValueError("pitch must not be blank")
+    if not 1 <= len(text) <= 240:
+        raise ValueError("pitch must be 1-240 characters")
+    text.encode("utf-8")
+    if text[-1] not in ".!?":
+        raise ValueError("pitch must end with sentence punctuation")
+    if any(sep in text for sep in (". ", "! ", "? ")):
+        raise ValueError("pitch must be exactly one sentence")
+
+
 def main() -> None:
+    validate(LINE)
     output = os.environ.get("ENTRY_OUTPUT", DEFAULT_OUTPUT)
     directory = os.path.dirname(output)
     if directory:
